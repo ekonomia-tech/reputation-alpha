@@ -1,0 +1,29 @@
+{
+  "name": "ekonomia-reputation",
+  "description": "On-Chain DeFi Reputation Scoring",
+  "repository": "https://github.com/ekonomia-tech/ekonomia-reputation",
+  "license": "MIT",
+  "scripts": {
+    "deploy:aave": "cd subgraphs/aave-v2 && graph deploy --product hosted-service nmimran99/aave-v2",
+    "lint": "yarn eslint .",
+    "lint-fix": "eslint . --fix",
+    "prettier": "prettier '**/*.ts'",
+    "prettier-write": "prettier --write '**/*.ts'"
+  },
+  "devDependencies": {
+    "@graphprotocol/contracts": "^1.10.5-testnet-nft",
+    "@graphprotocol/graph-cli": "0.28.0",
+    "@graphprotocol/graph-ts": "0.26.0",
+    "@types/node": "^17.0.19",
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
+    "@typescript-eslint/parser": "^5.15.0",
+    "eslint": "^8.11.0",
+    "mustache": "^4.2.0",
+    "prettier": "^2.6.0",
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "@aave/core-v3": "^1.13.1",
+    "@aave/protocol-v2": "^1.0.1"
+  }
+}

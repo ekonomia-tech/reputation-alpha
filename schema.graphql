@@ -1,0 +1,158 @@
+# SP: KEEP. Even though these are never used, but just assigned once for a respective protocol. I think this is still important because it will possibly lead to a factor that could change the resultant reputation score for an account
+enum LendingType {
+  "Collateralized Debt Position (CDP) protocols have singular isolated positions created by users. We aggregate them to give a single view of a market"
+  CDP
+  "Pooled protocols pool all users assets into a single market"
+  POOLED
+}
+
+"""
+Protocol represents all aggregated information of a single protocol on a single network.
+"""
+type Protocol @entity {
+  "The number of the Protocol"
+  id: ID!
+  "The name of the protocol"
+  name: String
+  "Type of lending protocol"
+  type: LendingType
+  "Protocol Main Address"
+  address: Bytes
+  "All Markets within this Protocol"
+  markets: [Market!]! @derivedFrom(field: "protocol")
+  "All Accounts that have used this Protocol"
+  accounts: [AccountInProtocol!]! @derivedFrom(field: "protocol")
+  "All events that happened in the protocol"
+  events: [Event!]! @derivedFrom(field: "protocol")
+}
+
+"""
+An asset used in a lending protocol. All assets should follow ERC-20 Standard
+"""
+type Asset @entity {
+  "Contract address"
+  id: ID!
+  "Token symbol"
+  symbol: String!
+  "Name of asset"
+  name: String!
+  "Decimals of the asset"
+  decimals: Int!
+}
+
+"""
+A single Market within a Protocol. A Market can be a single pool where all assets are pooled together. It can also be a combination of Collateralized Debt Positions (CDPs). The CDPs are aggregated together to represent a uniform Market. A Market can only contain 1 depositAsset and 1 borrowAsset.
+"""
+type Market @entity {
+  "Contract address"
+  id: ID!
+  "The Protocol the Market is a part of"
+  protocol: Protocol!
+  "Underlying Asset"
+  asset: Asset!
+  "Borrowed asset if there is one"
+  collateralAsset: Asset
+}
+
+"""
+An account that has interacted with at least 1 lending protocol tracked in the Subgraph
+""" # SP: Accounts within our protocol will have one reputation score.
+type Account @entity {
+  "Account external address"
+  id: ID!
+  "True if user has ever borrowed"
+  hasBorrowed: Boolean!
+  "Protocols that are associated to the account"
+  protocols: [AccountInProtocol!]! @derivedFrom(field: "account")
+  "Markets that are associated to the account"
+  markets: [AccountInMarket!]! @derivedFrom(field: "account")
+  "Poisitions of the account"
+  positions: [Position!]! @derivedFrom(field: "account")
+}
+
+"""
+History of an Account within a single Protocol
+"""
+type AccountInProtocol @entity {
+  "Account ID concatenated with Protocol ID"
+  id: ID!
+  "Protocol the Account is active in"
+  protocol: Protocol!
+  "Account which has participated in the Protocol"
+  account: Account!
+}
+
+"""
+Actions and history of an Account within a single Market
+"""
+type AccountInMarket @entity {
+  "Account ID concatenated with Market ID"
+  id: ID!
+  "Market the account is involved with"
+  market: Market!
+  "Account involved in this market"
+  account: Account!
+}
+
+type Position @entity {
+  "Build from accountid + marketid + type"
+  id: ID!
+  "Protocol id"
+  protocol: Protocol!
+  "account id"
+  account: Account!
+  "Market id"
+  market: Market!
+  "position type - Borrowing | Lending"
+  type: String
+  "The balance of the position"
+  balance: BigDecimal!
+  "total borrowed"
+  borrowed: BigDecimal!
+  "total borrowed"
+  repaid: BigDecimal!
+  "total borrowed"
+  deposited: BigDecimal!
+  "total borrowed"
+  withdrawn: BigDecimal!
+  "Is position closed - can be determined when repay > borrow or withdraw > deposit"
+  isActive: Boolean!
+  "Related event to the open position"
+  events: [Event!]!
+  "Interest paid - can be calculated once repay > borrow or withdraw > deposit"
+  interestPaid: BigDecimal!
+  "Closed positions count"
+  closedPositions: [Position!]!
+  "was the position liquidated?"
+  isLiquidated: Boolean
+}
+
+"""
+An event is a general action that occurs in a Lending Protocol
+"""
+type Event @entity {
+  "Transaction hash concatenated with log index"
+  id: ID!
+  "The Protocol the event originated from"
+  protocol: Protocol!
+  "The Market within a Protocol the event originated from"
+  market: Market!
+  "Main account involved in the event"
+  account: Account!
+  "Account to be transferred to - Relevant to Transfer event"
+  to: Account
+  "In case repayment is by another user"
+  onBehalfOf: Account
+  "Event type: Deposit Withdraw Borrow Repay Liquidate"
+  eventType: String!
+  "Amount of Tokens transferred - Underlying"
+  amount: BigDecimal!
+  "Underlying asset USD value"
+  amountUSD: BigDecimal!
+  "Block timestamp"
+  blockTime: Int!
+  "Block number"
+  blockNumber: Int!
+  "Liquidator that paid the debt: Relevant only for Liquidation event"
+  liquidator: Account
+}
