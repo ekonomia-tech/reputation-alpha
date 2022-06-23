@@ -28,4 +28,3 @@ export function getConcatenatedId(list: string[]): string {
   }
   return result;
 }
-

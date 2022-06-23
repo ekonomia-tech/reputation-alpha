@@ -1,4 +1,4 @@
-import { Account, Asset, Event, Market, Protocol } from "../../generated/schema";
+import { Account, Event, Market, Protocol } from "../../generated/schema";
 import { getOrCreateAsset } from "./asset";
 import { getConcatenatedId, PROTOCOL_ID } from "./generic";
 import { getOrCreatePosition, isPartialRepayment, processPositionLiquidation, updateLastPositionPartialPayment, updatePosition } from "./position";

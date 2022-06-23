@@ -1,7 +1,6 @@
-import { log } from '@graphprotocol/graph-ts';
 import { Account, Event } from '../../generated/schema';
 import { Borrow, Deposit, LiquidationCall, Repay, Withdraw } from '../../generated/templates/LendingPool/LendingPool';
-import {  getOrCreateAccount, markAccountAsBorrowed } from '../helpers/account';
+import { getOrCreateAccount, markAccountAsBorrowed } from '../helpers/account';
 import { getOrCreateAsset, toUSD } from '../helpers/asset';
 import { exponentToBigDecimal } from '../helpers/generic';
 import { getOrCreateMarket, updateStatistics } from '../helpers/market';
@@ -129,8 +128,8 @@ export function handleRepay(event: Repay): void {
     let market = getOrCreateMarket(event.params.reserve.toHexString());
     let protocol = getOrCreateProtocol(market.protocol);
     let asset = getOrCreateAsset(market.asset);
-    let account = getOrCreateAccount(event.params.repayer.toHexString());
-    let onBehalfOf = getOrCreateAccount(event.params.user.toHexString());
+    let repayer = getOrCreateAccount(event.params.repayer.toHexString());
+    let account = getOrCreateAccount(event.params.user.toHexString());
 
     let repayId = event.transaction.hash
       .toHexString()
@@ -145,18 +144,20 @@ export function handleRepay(event: Repay): void {
     let eventEntry = new Event(repayId);
     eventEntry.eventType = "REPAY";
     eventEntry.market = market.id;
-    eventEntry.account = account.id;
-    eventEntry.onBehalfOf = onBehalfOf.id;
+    
+    if (repayer) {
+      eventEntry.account = repayer.id;
+      eventEntry.onBehalfOf = account.id;
+    } else {
+      eventEntry.account = account.id;
+    }
+    
     eventEntry.amount = repayAmount;
     eventEntry.amountUSD = toUSD(asset.id, eventEntry.amount);
     eventEntry.blockTime = event.block.timestamp.toI32();
     eventEntry.blockNumber = event.block.number.toI32();
     eventEntry.save();
 
-    if (onBehalfOf) {
-      updateStatistics(protocol, market, onBehalfOf, eventEntry);
-      return;
-    }
     updateStatistics(protocol, market, account, eventEntry);
 }
 
