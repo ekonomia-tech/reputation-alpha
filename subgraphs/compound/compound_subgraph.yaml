@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 description: Compound is an open-source protocol for algorithmic, efficient Money Markets on the Ethereum blockchain.
 repository: https://github.com/graphprotocol/compound-V2-subgraph
 schema:
@@ -98,5 +98,5 @@ templates:
           handler: handleRepayBorrow
         - event: LiquidateBorrow(address,address,uint256,address,uint256)
           handler: handleLiquidateBorrow
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
+        # - event: Transfer(indexed address,indexed address,uint256)
+        #   handler: handleTransfer
