@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 description: Aave is a decentralized non-custodial liquidity protocol where users can participate as depositors or borrowers.
 repository: https://github.com/ekonomia-tech/lending-subgraph-standard
 schema:
@@ -27,8 +27,8 @@ dataSources:
         - event: AddressesProviderRegistered(indexed address)
           handler: handleAddressesProviderRegistered
 templates:
-  - name: LendingPoolAddressesProvider
-    kind: ethereum/contract
+  - kind: ethereum/contract
+    name: LendingPoolAddressesProvider
     network: mainnet
     source:
       abi: LendingPoolAddressesProvider
