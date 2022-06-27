@@ -12,7 +12,7 @@ export function handleBorrow(event: Borrow): void {
     let protocol = getOrCreateProtocol(market.protocol);
     let asset = getOrCreateAsset(market.asset);
     let account = getOrCreateAccount(event.params.user.toHexString());
-    let onBehalfOf: Account;
+    let onBehalfOf = getOrCreateAccount(event.params.onBehalfOf.toHexString());
   
     let borrowId = event.transaction.hash
       .toHexString()
@@ -34,6 +34,7 @@ export function handleBorrow(event: Borrow): void {
       eventEntry.onBehalfOf = onBehalfOf.id;
     }
 
+    eventEntry.protocol = protocol.id;
     eventEntry.amount = borrowAmount;
     eventEntry.amountUSD = toUSD(asset.id, eventEntry.amount);
     eventEntry.blockTime = event.block.timestamp.toI32();
@@ -56,7 +57,7 @@ export function handleDeposit(event: Deposit): void {
     let protocol = getOrCreateProtocol(market.protocol);
     let asset = getOrCreateAsset(market.asset);
     let account = getOrCreateAccount(event.params.user.toHexString());
-    let onBehalfOf: Account;
+    let onBehalfOf = getOrCreateAccount(event.params.onBehalfOf.toHexString());
 
     let depositId = event.transaction.hash
       .toHexString()
@@ -78,6 +79,7 @@ export function handleDeposit(event: Deposit): void {
       eventEntry.onBehalfOf = onBehalfOf.id;
     }
 
+    eventEntry.protocol = protocol.id;
     eventEntry.amount = depositAmount;
     eventEntry.amountUSD = toUSD(asset.id, eventEntry.amount);
     eventEntry.blockTime = event.block.timestamp.toI32();
@@ -111,6 +113,7 @@ export function handleWithdraw(event: Withdraw): void {
 
     let eventEntry = new Event(withdrawId);
     eventEntry.eventType = "WITHDRAW";
+    eventEntry.protocol = protocol.id;
     eventEntry.market = market.id;
     eventEntry.account = account.id;
     eventEntry.amount = withdrawAmount;
@@ -152,6 +155,7 @@ export function handleRepay(event: Repay): void {
       eventEntry.account = account.id;
     }
     
+    eventEntry.protocol = protocol.id;
     eventEntry.amount = repayAmount;
     eventEntry.amountUSD = toUSD(asset.id, eventEntry.amount);
     eventEntry.blockTime = event.block.timestamp.toI32();
@@ -181,6 +185,7 @@ export function handleLiquidate(event: LiquidationCall): void {
 
     let eventEntry = new Event(liquidationId);
     eventEntry.eventType = "LIQUIDATION"
+    eventEntry.protocol = protocol.id;
     eventEntry.market = market.id;
     eventEntry.account = account.id;
     eventEntry.liquidator = liquidator.id;

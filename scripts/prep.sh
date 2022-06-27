@@ -13,7 +13,7 @@ yaml="./main/subgraph.yaml"
 touch $yaml;
 
 echo "specVersion: 0.0.4" >> ./main/subgraph.yaml;
-echo "Reputation Subgraphs" >> ./main/subgraph.yaml;
+echo "description: Reputation Subgraphs" >> ./main/subgraph.yaml;
 echo "repository: https://github.com/ekonomia-tech/reputation-alpha" >> ./main/subgraph.yaml;
 echo "schema:" >> ./main/subgraph.yaml;
 echo "  file: ../schema.graphql" >> ./main/subgraph.yaml;
@@ -25,6 +25,11 @@ touch "./main/templates_temp.yaml";
 for d in ./subgraphs/*; do
     ## Create needed directories
     name=${d##*/};
+
+    if [ $name == "compound" ]; 
+    then 
+        continue; 
+    fi
     mkdir ./main/src/$name;
 
     ## check if prices exists and if not copy form first iteration
