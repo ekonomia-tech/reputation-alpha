@@ -115,7 +115,8 @@ export function handleRepayBorrow(event: RepayBorrow): void {
     let asset = getOrCreateAsset(market.asset)
     let protocol = getOrCreateProtocol(market.protocol)
     let account = getOrCreateAccount(event.params.borrower.toHexString())
-    let repayer = getOrCreateAccount(event.params.payer.toHexString())
+    let executingAccount = getOrCreateAccount(event.params.payer.toHexString())
+    
     let repayId = event.transaction.hash
         .toHexString()
         .concat('-')
@@ -131,14 +132,8 @@ export function handleRepayBorrow(event: RepayBorrow): void {
     eventEntry.eventType = "REPAY"
     eventEntry.market = market.id
     eventEntry.protocol = protocol.id
-   
-    if (repayer) {
-        eventEntry.account = repayer.id;
-        eventEntry.onBehalfOf = account.id;
-      } else {
-        eventEntry.account = account.id;
-      }
-      
+    eventEntry.account = account.id;
+    eventEntry.executingAccount = executingAccount.id;   
     eventEntry.amount = underlyingAmount;
     eventEntry.amountUSD = toUSD(market.asset, underlyingAmount);
     eventEntry.amount = underlyingAmount
@@ -146,7 +141,7 @@ export function handleRepayBorrow(event: RepayBorrow): void {
     eventEntry.blockNumber = event.block.number.toI32()
 
     eventEntry.save()
-
+    
     updateStatistics(protocol, market, account, eventEntry);
 }
 

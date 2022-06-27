@@ -29,9 +29,11 @@ export function handleBorrow(event: Borrow): void {
     eventEntry.market = market.id;
     eventEntry.account = account.id;
 
-    if (event.params.onBehalfOf) {
-      onBehalfOf = getOrCreateAccount(event.params.onBehalfOf.toHexString());
-      eventEntry.onBehalfOf = onBehalfOf.id;
+    if (account.id != onBehalfOf.id) {
+      eventEntry.account = onBehalfOf.id
+      eventEntry.executingAccount = account.id
+    } else {
+      eventEntry.account = account.id
     }
 
     eventEntry.protocol = protocol.id;
@@ -41,7 +43,7 @@ export function handleBorrow(event: Borrow): void {
     eventEntry.blockNumber = event.block.number.toI32();
     eventEntry.save();
 
-    if (onBehalfOf) {
+    if (eventEntry.executingAccount) {
       updateStatistics(protocol, market, onBehalfOf, eventEntry);
       markAccountAsBorrowed(onBehalfOf);
       return
@@ -72,11 +74,12 @@ export function handleDeposit(event: Deposit): void {
     let eventEntry = new Event(depositId);
     eventEntry.eventType = "DEPOSIT";
     eventEntry.market = market.id;
-    eventEntry.account = account.id;
     
-    if (event.params.onBehalfOf) {
-      onBehalfOf = getOrCreateAccount(event.params.onBehalfOf.toHexString());
-      eventEntry.onBehalfOf = onBehalfOf.id;
+    if (account.id != onBehalfOf.id) {
+      eventEntry.account = onBehalfOf.id
+      eventEntry.executingAccount = account.id
+    } else {
+      eventEntry.account = account.id
     }
 
     eventEntry.protocol = protocol.id;
@@ -86,7 +89,7 @@ export function handleDeposit(event: Deposit): void {
     eventEntry.blockNumber = event.block.number.toI32();
     eventEntry.save();
 
-    if (onBehalfOf) {
+    if (eventEntry.executingAccount) {
         updateStatistics(protocol, market, onBehalfOf, eventEntry);
         return;
     }
@@ -131,7 +134,7 @@ export function handleRepay(event: Repay): void {
     let market = getOrCreateMarket(event.params.reserve.toHexString());
     let protocol = getOrCreateProtocol(market.protocol);
     let asset = getOrCreateAsset(market.asset);
-    let repayer = getOrCreateAccount(event.params.repayer.toHexString());
+    let executingAccount = getOrCreateAccount(event.params.repayer.toHexString());
     let account = getOrCreateAccount(event.params.user.toHexString());
 
     let repayId = event.transaction.hash
@@ -147,14 +150,8 @@ export function handleRepay(event: Repay): void {
     let eventEntry = new Event(repayId);
     eventEntry.eventType = "REPAY";
     eventEntry.market = market.id;
-    
-    if (repayer) {
-      eventEntry.account = repayer.id;
-      eventEntry.onBehalfOf = account.id;
-    } else {
-      eventEntry.account = account.id;
-    }
-    
+    eventEntry.account = account.id;
+    eventEntry.executingAccount = executingAccount.id;  
     eventEntry.protocol = protocol.id;
     eventEntry.amount = repayAmount;
     eventEntry.amountUSD = toUSD(asset.id, eventEntry.amount);

@@ -189,7 +189,8 @@ export function getOrCreatePosition(protocol: Protocol, account: Account, market
   }
   
   export function updateLastPositionPartialPayment(position: Position, event: Event): void {
-    let lastPosition = getLastClosedPosition(position);
+    let lastPosition = Position.load(position.closedPositions[position.closedPositions.length - 1]);
+    if (!lastPosition) return;
     let updatedEvents = lastPosition.events;
     updatedEvents.push(event.id);
     lastPosition.events = updatedEvents;

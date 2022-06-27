@@ -26,10 +26,10 @@ for d in ./subgraphs/*; do
     ## Create needed directories
     name=${d##*/};
 
-    if [ $name == "compound" ]; 
-    then 
-        continue; 
-    fi
+    # if [ $name == "compound" ]; 
+    # then 
+    #     continue; 
+    # fi
     mkdir ./main/src/$name;
 
     ## check if prices exists and if not copy form first iteration
@@ -125,4 +125,4 @@ replace="../generated";
 find ./main/src/*/* -type f ! -path "./main/src/Prices/*" -exec sed -i '' 's/generated/..\/generated/g' {} +
 find ./main/src/*/* -type f -exec sed -i '' 's/Prices/..\/Prices/g' {} +
 
-cd main && graph codegen && graph build
+cd main && graph codegen
