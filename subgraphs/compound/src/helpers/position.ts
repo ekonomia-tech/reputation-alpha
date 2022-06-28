@@ -99,7 +99,7 @@ export function getOrCreatePosition(protocol: Protocol, account: Account, market
       // Calculate the status of the position and the interest if repaid in any form.
       potentialInterest = position.withdrawn.minus(position.deposited);
       
-      if (potentialInterest > BigDecimal.zero()) {
+      if (potentialInterest >= BigDecimal.zero()) {
   
         // If withdrawn > deposit, it means the position has been withdrawn and the remainder is
         // the interest. In this case we create a new postion that will act as legacy

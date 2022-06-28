@@ -33,12 +33,14 @@ export function getOrCreateMarket(id: string): Market {
       assetSymbol = 'ETH'
       // It is all other CERC20 contracts
     } else {
-      assetAddress = contract.underlying()
+      assetAddress = contract.underlying();
       let underlyingContract = ERC20.bind(assetAddress as Address)
       assetDecimals = underlyingContract.decimals()
       if (assetAddress.toHexString() != DAI_V1_ADDRESS) {
-        assetName = underlyingContract.name()
-        assetSymbol = underlyingContract.symbol()
+        let tryName = underlyingContract.try_name();
+        let trySymbol = underlyingContract.try_symbol();
+        assetName = tryName.reverted ? "" : tryName.value;
+        assetSymbol = trySymbol.reverted ? "" : trySymbol.value;
       } else {
         assetName = 'Dai Stablecoin v1.0 (DAI)'
         assetSymbol = 'DAI'
