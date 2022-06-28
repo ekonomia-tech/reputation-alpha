@@ -21,11 +21,10 @@ export function handleDeposit(event: Deposit): void {
     .concat('-')
     .concat(event.transactionLogIndex.toString())
 
-    log.warning("token: {}, Amount: {}", [asset.symbol, event.params.amount.toString()]);
     let underlyingAmount = event.params.amount
         .toBigDecimal()
-        .div(exponentToBigDecimal(asset.decimals))
-        .truncate(asset.decimals);
+        .div(exponentToBigDecimal(18))
+        .truncate(18);
     
     let eventEntry = new Event(depositId)
     eventEntry.eventType = "DEPOSIT"
@@ -53,9 +52,9 @@ export function handleBorrow(event: Borrow): void {
       .concat(event.transactionLogIndex.toString());
     
     let borrowAmount = event.params.amount
-      .toBigDecimal()
-      .div(exponentToBigDecimal(asset.decimals))
-      .truncate(asset.decimals);
+        .toBigDecimal()
+        .div(exponentToBigDecimal(18))
+        .truncate(18);
   
     let eventEntry = new Event(borrowId);
     eventEntry.eventType = "BORROW";
@@ -86,9 +85,9 @@ export function handleWithdraw(event: Withdraw): void {
       .concat(event.transactionLogIndex.toString());
 
     let withdrawAmount = event.params.amount
-      .toBigDecimal()
-      .div(exponentToBigDecimal(asset.decimals))
-      .truncate(asset.decimals);
+        .toBigDecimal()
+        .div(exponentToBigDecimal(18))
+        .truncate(18);
 
     let eventEntry = new Event(withdrawId);
     eventEntry.eventType = "WITHDRAW";
@@ -116,9 +115,9 @@ export function handleRepay(event: Repay): void {
       .concat(event.transactionLogIndex.toString());
 
     let repayAmount = event.params.amount
-      .toBigDecimal()
-      .div(exponentToBigDecimal(asset.decimals))
-      .truncate(asset.decimals);
+        .toBigDecimal()
+        .div(exponentToBigDecimal(18))
+        .truncate(18);
 
     let eventEntry = new Event(repayId);
     eventEntry.eventType = "REPAY";
