@@ -142,7 +142,7 @@ type Event @entity {
   "Account to be transferred to - Relevant to Transfer event"
   to: Account
   "In case repayment is by another user"
-  onBehalfOf: Account
+  executingAccount: Account
   "Event type: Deposit Withdraw Borrow Repay Liquidate"
   eventType: String!
   "Amount of Tokens transferred - Underlying"
