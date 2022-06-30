@@ -23,6 +23,7 @@ touch "./main/datasources_temp.yaml";
 touch "./main/templates_temp.yaml";
 
 for d in ./subgraphs/*; do
+    
     ## Create needed directories
     name=${d##*/};
 
@@ -33,9 +34,9 @@ for d in ./subgraphs/*; do
     mkdir ./main/src/$name;
 
     ## check if prices exists and if not copy form first iteration
-    if ! [ -d ./main/src/Prices ]
+    if ! [ -d ./main/Prices ]
     then
-        cp -r $d/src/Prices ./main/src/;
+        cp -r $d/Prices ./main;
     fi
 
     cp -a -n $d/abis/. ./main/abis
@@ -125,4 +126,4 @@ replace="../generated";
 find ./main/src/*/* -type f ! -path "./main/src/Prices/*" -exec sed -i '' 's/generated/..\/generated/g' {} +
 find ./main/src/*/* -type f -exec sed -i '' 's/Prices/..\/Prices/g' {} +
 
-cd main && graph codegen
+graph codegen ./main/subgraph.yaml --output-dir ./main/generated

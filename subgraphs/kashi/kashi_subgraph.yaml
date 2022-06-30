@@ -1,0 +1,91 @@
+specVersion: 0.0.4
+description: Platforms like Compound and Aave allow users to deposit assets as collateral and borrow other assets against this. These protocols have attracted billions of dollars, but they suffer from some major limitations. Taking away these limitations could see much larger adoption; Kashi does just that.
+repository: https://github.com/ekonomia-tech/reputation-alpha
+schema:
+  file: ../../schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: BentoBox
+    network: mainnet
+    source:
+      address: "0xF5BCE5077908a1b7370B9ae04AdC565EBd643966"
+      abi: BentoBox
+      startBlock: 12094174
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/bentobox.ts
+      entities:
+        - BentoBox
+      abis:
+        - name: BentoBox
+          file: ./abis/BentoBox.json
+        - name: KashiPair
+          file: ./abis/KashiPair.json
+        - name: ERC20
+          file: ./abis/erc20.json
+      eventHandlers:
+        - event: LogDeploy(indexed address,bytes,indexed address)
+          handler: handleLogDeploy
+templates:
+  - name: KashiPair
+    kind: ethereum/contract
+    network: mainnet
+    source:
+      abi: KashiPair
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/kashiPair.ts
+      entities:
+        - KashiPair
+      abis:
+        - name: BentoBox
+          file: ./abis/BentoBox.json
+        - name: KashiPair
+          file: ./abis/KashiPair.json
+        - name: ERC20
+          file: ./abis/erc20.json
+        - name: PriceOracle
+          file: ./abis/priceOracle.json
+        - name: _ERC20
+          file: ./abis/Prices/ERC20.json
+        # Curve Contracts
+        - name: CurveRegistry
+          file: ./abis/Prices/Curve/Registry.json
+        - name: CalculationsCurve
+          file: ./abis/Prices/Calculations/Curve.json
+        # YearnLens Contracts
+        - name: YearnLensContract
+          file: ./abis/Prices/YearnLens.json
+        # ChainLink Contracts
+        - name: ChainLinkContract
+          file: ./abis/Prices/ChainLink.json
+        # Uniswap Contracts
+        - name: UniswapRouter
+          file: ./abis/Prices/Uniswap/Router.json
+        - name: UniswapFactory
+          file: ./abis/Prices/Uniswap/Factory.json
+        - name: UniswapPair
+          file: ./abis/Prices/Uniswap/Pair.json
+        # SushiSwap Contracts
+        - name: SushiSwapRouter
+          file: ./abis/Prices/SushiSwap/Router.json
+        - name: SushiSwapFactory
+          file: ./abis/Prices/SushiSwap/Factory.json
+        - name: SushiSwapPair
+          file: ./abis/Prices/SushiSwap/Pair.json
+        - name: CalculationsSushiSwap
+          file: ./abis/Prices/Calculations/SushiSwap.json 
+      eventHandlers:
+        - event: LogAddCollateral(indexed address,indexed address,uint256)
+          handler: handleLogAddCollateral
+        - event: LogRemoveCollateral(indexed address,indexed address,uint256)
+          handler: handleLogRemoveCollateral
+        - event: LogBorrow(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleLogBorrow
+        - event: LogRepay(indexed address,indexed address,uint256,uint256)
+          handler: handleLogRepay
+          

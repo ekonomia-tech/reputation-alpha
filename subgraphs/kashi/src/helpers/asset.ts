@@ -1,8 +1,9 @@
 import { Asset } from '../../generated/schema'
-import { ERC20 } from '../../generated/Euler/ERC20'
+import { ERC20 } from '../../generated/templates/KashiPair/ERC20'
 import { Address, BigDecimal, log } from '@graphprotocol/graph-ts'
 import { getUsdPrice } from '../../Prices/index'
-import { EULER_DECIMALS } from './generic'
+import { BASE_DECIMALS } from './generic'
+
 
 export function getOrCreateAsset(assetAddress: string): Asset {
   let asset = Asset.load(assetAddress)
@@ -14,11 +15,11 @@ export function getOrCreateAsset(assetAddress: string): Asset {
 
   let assetName = assetContract.try_name()
   let assetSymbol = assetContract.try_symbol()
-  let assetDecimals = EULER_DECIMALS
+  let assetDecimals = assetContract.try_decimals()
 
   asset.name = assetName.reverted ? 'UNKNOWN' : assetName.value
-  asset.symbol = assetSymbol.reverted ? 'UNKNOWN' : assetSymbol.value
-  asset.decimals = assetDecimals
+  asset.symbol = assetSymbol.reverted ? 'UNKNWON' : assetSymbol.value
+  asset.decimals = assetDecimals.reverted ? BASE_DECIMALS : assetDecimals.value;
 
   asset.save()
   return asset
