@@ -4,10 +4,12 @@
   "repository": "https://github.com/ekonomia-tech/ekonomia-reputation",
   "license": "MIT",
   "scripts": {
+    "build:kashi": "./scripts/build.sh kashi",
     "build:aave-v2": "./scripts/build.sh aave-v2",
     "build:compound": "./scripts/build.sh compound",
     "build:euler": "./scripts/build.sh euler",
     "build:all": "./scripts/build.sh",
+    "deploy:kashi": "./scripts/deploy.sh kashi",
     "deploy:aave-v2": "./scripts/deploy.sh aave-v2",
     "deploy:compound": "./scripts/deploy.sh compound",
     "deploy:euler": "./scripts/deploy.sh euler",

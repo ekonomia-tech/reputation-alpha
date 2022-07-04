@@ -158,7 +158,7 @@ export function createChildPosition(position: Position, interest: BigDecimal): P
   let type = position.type == 'BOR' ? 'BORROW' : 'DEPOSIT'
   let protocol = getOrCreateProtocol(position.protocol)
   let account = getOrCreateAccount(position.account)
-  let market = getOrCreateMarket(position.market.split('-')[1])
+  let market = getOrCreateMarket(position.market)
   let newPos = getOrCreatePosition(protocol, account, market, type, loc)
 
   newPos.borrowed = position.borrowed
