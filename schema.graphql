@@ -62,6 +62,12 @@ type Account @entity {
   id: ID!
   "True if user has ever borrowed"
   hasBorrowed: Boolean!
+  "last borrow position"
+  lastBorrowPositionId: Int!
+  "last deposit position"
+  lastDepositPositionId: Int!
+  "last arbitrary position - meant ofr positions that are not DEPOSIT or BORROW such as WITHDRAW LIQUIDATION"
+  lastArbitraryPositionId: Int!
   "Protocols that are associated to the account"
   protocols: [AccountInProtocol!]! @derivedFrom(field: "account")
   "Markets that are associated to the account"
@@ -119,8 +125,10 @@ type Position @entity {
   isActive: Boolean!
   "Related event to the open position"
   events: [Event!]!
-  "Interest paid - can be calculated once repay > borrow or withdraw > deposit"
+  "Interest paid (in token) - can be calculated once repay > borrow or withdraw > deposit"
   interestPaid: BigDecimal!
+  "Interest paid (in dollars) - can be calculated once repay > borrow or withdraw > deposit"
+  interestPaidUSD: BigDecimal!
   "Closed positions count"
   closedPositions: [Position!]!
   "was the position liquidated?"

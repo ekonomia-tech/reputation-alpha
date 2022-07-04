@@ -12,6 +12,9 @@ export function getOrCreateAccount(id: string): Account {
   if (!account) {
     account = new Account(id)
     account.hasBorrowed = false
+    account.lastBorrowPositionId = 0;
+    account.lastDepositPositionId = 0;
+    account.lastArbitraryPositionId = 0;
     account.save()
   }
   return account
