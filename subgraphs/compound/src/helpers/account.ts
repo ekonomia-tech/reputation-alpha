@@ -1,9 +1,5 @@
 import {
-  Account,
-  AccountInMarket,
-  AccountInProtocol,
-  Market,
-  Protocol,
+  Account, AccountInProtocol, Protocol
 } from '../../generated/schema'
 import { getConcatenatedId } from './generic'
 
@@ -37,20 +33,4 @@ export function getOrCreateAccountInProtocol(
     acp.save()
   }
   return acp
-}
-
-export function getOrCreateAccountInMarket(
-  protocol: Protocol,
-  market: Market,
-  account: Account,
-): AccountInMarket {
-  const acmId = getConcatenatedId([protocol.id, account.id, market.id])
-  let acm = AccountInMarket.load(acmId)
-  if (!acm) {
-    acm = new AccountInMarket(acmId)
-    acm.market = market.id
-    acm.account = account.id
-    acm.save()
-  }
-  return acm
 }
