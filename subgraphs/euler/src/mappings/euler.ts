@@ -255,19 +255,6 @@ export function _handleWithdraw(event: Event): void {
   position.save();
 }
 
-// // In case of a repayment
-// // 1. Check if there is an open BORROW position to the account
-// //  a. if there is an open position:
-// //    i. check if the executingAccount != null and executingAccount != account.
-// //      I. if the accounts are different, treat as normal repayment, but mark the position as LIQUIDATED
-// //      II. change the balances and close the position
-// //    ii. if the executingAccount is empty, treat as normal repayment
-// //      I. update balances and close the position if balance <= 0;
-// //  b. if there is no open position
-// //    i. check if there is a previous borrow position
-// //      I. if there is a previous borrow position - update the balance and add the event. keep the position closed
-// //      II. if there isnt any previous borrow position, create a new position, update the balance and close it
-
 export function _handleRepay(event: Event): void {
   let positionId = getPositionId(event);
   let position = Position.load(positionId);
@@ -321,11 +308,6 @@ export function _handleRepay(event: Event): void {
   
 }
 
-// In case of a liquidation
-// 1. check if the borrow position exists of the account
-//  a. exists - add the liquidation event to the position, market the position as liquidated but do not close it.
-//      there will be a repayment event emitted that will close the position.
-//  b. doesnt exits - pull out.
 export function _handleLiquidation(event: Event): void {
   let positionId = getPositionId(event);
   let position = Position.load(positionId);

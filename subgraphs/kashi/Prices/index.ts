@@ -17,7 +17,6 @@ export function getUsdPricePerToken(tokenAddr: Address): CustomPriceType {
   }
 
   let network = dataSource.network()
-  let decimals = constants.BIGINT_TEN.pow(BigInt.fromI32(6).toI32() as u8).toBigDecimal()
 
   // 1. Yearn Lens Oracle
   let yearnLensPrice = getTokenPriceFromYearnLens(tokenAddr, network)
