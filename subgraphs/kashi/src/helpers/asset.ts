@@ -2,7 +2,7 @@ import { Asset } from '../../generated/schema'
 import { ERC20 } from '../../generated/templates/KashiPair/ERC20'
 import { Address, BigDecimal, log } from '@graphprotocol/graph-ts'
 import { getUsdPrice } from '../../Prices/index'
-import { BASE_DECIMALS } from './generic'
+import { BASE_DECIMALS, exponentToBigDecimal } from './generic'
 
 
 export function getOrCreateAsset(assetAddress: string): Asset {
@@ -26,5 +26,11 @@ export function getOrCreateAsset(assetAddress: string): Asset {
 }
 
 export function toUSD(assetId: string, amount: BigDecimal): BigDecimal {
-  return getUsdPrice(Address.fromString(assetId.toLowerCase()), amount)
+  let asset = Asset.load(assetId);
+  if (!asset) return BigDecimal.zero();
+  return getUsdPrice(Address.fromString(assetId.toLowerCase())
+  , amount
+      .div(exponentToBigDecimal(asset.decimals))
+      .truncate(asset.decimals)
+  )
 }

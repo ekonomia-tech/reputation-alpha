@@ -2,7 +2,7 @@ import { Asset } from '../../generated/schema'
 import { ERC20 } from '../../generated/templates/CToken/ERC20'
 import { Address, BigDecimal, log } from '@graphprotocol/graph-ts'
 import { getUsdPrice } from '../../Prices/index'
-import { MAKER_TOKEN, zeroInt } from './generic'
+import { exponentToBigDecimal, MAKER_TOKEN, zeroInt } from './generic'
 
 export function getOrCreateAsset(assetAddress: string): Asset {
   let asset = Asset.load(assetAddress)
@@ -31,5 +31,11 @@ export function getOrCreateAsset(assetAddress: string): Asset {
 }
 
 export function toUSD(assetId: string, amount: BigDecimal): BigDecimal {
-  return getUsdPrice(Address.fromString(assetId.toLowerCase()), amount)
+  let asset = Asset.load(assetId);
+  if (!asset) return BigDecimal.zero();
+  return getUsdPrice(Address.fromString(assetId.toLowerCase())
+  , amount
+      .div(exponentToBigDecimal(asset.decimals))
+      .truncate(asset.decimals)
+  )
 }
